@@ -1,0 +1,39 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: backend
+    container_name: polygon-manager-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - DB_FILE=/app/data/polygons.db
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - ./data:/app/data
+    networks:
+      - polygon-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: frontend
+    container_name: polygon-manager-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - polygon-network
+
+networks:
+  polygon-network:
+    driver: bridge
